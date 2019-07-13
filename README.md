@@ -27,6 +27,7 @@ import (
 func main() {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
+
 	var (
 		defNs netns.NsDesc
 		ns    netns.NsDesc
@@ -59,7 +60,7 @@ func main() {
 	}
 
 	//
-	// Switch to a new namespace
+	// Create a new namespace and switch to it
 	//
 	ns, err = netns.SetByName(name)
 	if err != nil {
