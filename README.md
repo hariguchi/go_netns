@@ -9,7 +9,9 @@ The following functions are added:
 * Delete a namespace by name
 * Change the belonging namespace by name
 
-## Example ##
+## Examples ##
+
+examples/example1.go
 
 ```go
 package main
@@ -26,20 +28,25 @@ func main() {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 	var (
-		defNs netns.NsHandle
+		defNs netns.NsDesc
 		ns    netns.NsDesc
 		err   error
 		name  string = "nsTest"
 	)
 
 	//
-	// Save the current namespace handle
+	// Save the current namespace
 	//
-	defNs, err = netns.GetMyHandle()
+	defNs, err = netns.Get()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "ERROR: GetMyHandle(): %v\n", err)
+		fmt.Fprintf(os.Stderr, "ERROR: Get(): %v\n", err)
 		os.Exit(1)
 	}
+	//
+	// Close the current namespace when exit.
+	// The namespace will continue to exist.
+	//
+	defer defNs.Close()
 
 	//
 	// Dump interfaces in the default namespace
@@ -80,7 +87,7 @@ func main() {
 	//
 	// Switch back to the default namespace
 	//
-	if err := netns.SetByHandle(defNs); err != nil {
+	if err := defNs.Set(); err != nil {
 		fmt.Fprintf(os.Stderr, "ERROR: Set(): %v\n", err)
 		os.Exit(1)
 	}
